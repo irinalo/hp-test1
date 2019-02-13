@@ -1,6 +1,5 @@
 package com.iril.hp.test1.model;
 
-
 public class CountryCodesMetrics {
     private int origin;
     private int destination;

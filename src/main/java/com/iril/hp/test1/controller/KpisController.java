@@ -17,7 +17,7 @@ public class KpisController {
     private KpisService kpisService;
 
     @GetMapping
-    public Kpis getKpis() throws Exception {
+    public Kpis getKpis() {
         return kpisService.getKpis();
     }
 

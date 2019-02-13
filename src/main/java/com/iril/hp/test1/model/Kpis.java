@@ -2,7 +2,6 @@ package com.iril.hp.test1.model;
 
 import java.util.Map;
 
-
 public class Kpis {
     private long noOfFiles;
     private long noOfRows;
@@ -10,7 +9,7 @@ public class Kpis {
     private long noOfMessages;
     private int noOfOriginCC;
     private int noOfDestinationCC;
-    private   Map<String, Long> processingTime;
+    private Map<String, Long> processingTime;
 
     public Kpis(long noOfFiles, long noOfRows, long noOfCalls, long noOfMessages, int noOfOriginCC,
         int noOfDestinationCC,

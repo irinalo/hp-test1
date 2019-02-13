@@ -31,7 +31,7 @@ public class MessageProcessor extends AbstractJsonProcessor implements JsonProce
                 Message message = new Message();
                 message.setValue(value);
                 message.setDoc(fileName);
-                message.setId(System.currentTimeMillis());
+                message.setId(String.valueOf(System.currentTimeMillis()));
                 messageRepository.save(message);
             }
         }

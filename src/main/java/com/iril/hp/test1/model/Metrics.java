@@ -3,7 +3,6 @@ package com.iril.hp.test1.model;
 import java.util.List;
 import java.util.Map;
 
-
 public class Metrics {
     private String fileName;
     private long missingFields;
@@ -37,7 +36,6 @@ public class Metrics {
     public void setCountryCodesMetricsList(List<CountryCodesMetrics> countryCodesMetricsList) {
         this.countryCodesMetricsList = countryCodesMetricsList;
     }
-
 
     public String getFileName() {
         return fileName;

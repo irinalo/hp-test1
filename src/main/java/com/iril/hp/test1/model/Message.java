@@ -4,13 +4,12 @@ import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
-
 @SolrDocument
 public class Message {
 
     @Id
     @Field("id")
-    private long id;
+    private String id;
 
     @Field("value_txt")
     private String value;
@@ -26,11 +25,11 @@ public class Message {
         this.value = value;
     }
 
-    public void setId(long currentTimeMillis) {
+    public void setId(String currentTimeMillis) {
         id = currentTimeMillis;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
@@ -41,6 +40,5 @@ public class Message {
     public void setDoc(String doc) {
         this.doc = doc;
     }
-
 
 }

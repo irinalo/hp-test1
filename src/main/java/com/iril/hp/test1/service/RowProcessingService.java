@@ -28,22 +28,22 @@ public class RowProcessingService {
 
     void processRow(String line, String fileName) {
         McpRow mcpRow = new McpRow();
-        JsonNode node = null;
+        JsonNode node;
         try {
             node = objectMapper.readTree(line);
+            if (node.get("message_type") != null) {
+                try {
+                    MessageType messageType = MessageType.valueOf(node.get("message_type").textValue());
+                    processorFactory.getProcessorByMessageType(messageType).processRow(fileName, node, mcpRow);
+                } catch (Exception ex) {
+                    logger.error("Could not process message type " + node.get("message_type"));
+                    mcpRow.setInvalidFields(true);
+                }
+            } else{
+                mcpRow.setMissingFields(true);
+            }
         } catch (Exception ex) {
             mcpRow.setInvalidFields(true);
-            mcpRow.setFileName(fileName);
-            mcpRowRepository.save(mcpRow);
-        }
-
-        if (node.get("message_type") != null) {
-            try {
-                MessageType messageType = MessageType.valueOf(node.get("message_type").textValue());
-                processorFactory.getProcessorByMessageType(messageType).processRow(fileName, node, mcpRow);
-            } catch (Exception ex) {
-                logger.error("Could not process message type " + node.get("message_type"));
-            }
         }
 
         mcpRow.setFileName(fileName);

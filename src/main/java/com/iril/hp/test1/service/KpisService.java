@@ -30,5 +30,4 @@ public class KpisService {
             mcpFileRepository.findAll().stream().collect(Collectors.toMap(McpFile::getFileName,
                 McpFile::getProcessTime, (oldV, newV) -> newV)));
     }
-
 }
