@@ -5,6 +5,7 @@ import com.iril.hp.test1.persistence.McpRowRepository;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.params.CursorMarkParams;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
@@ -36,21 +37,30 @@ public class MetricsService {
 
     private Map<String, Integer> getWordsFrequency(String fileName,
         List<String> words) throws org.apache.solr.client.solrj.SolrServerException, IOException {
-        SolrQuery query = new SolrQuery("doc_s:" + fileName);
-        words.forEach(word -> query.addField(word + "Freq:termfreq(\"value_txt\",\"" + word + "\")"));
-        //TODO: read page by page
-        query.setRows(100);
-        QueryRequest request = new QueryRequest(query);
-        QueryResponse response = request.process(solrTemplate.getSolrClient(), "message");
         Map<String, Integer> wordFrequency = new HashMap<>();
-        response.getResults().forEach(document -> document.getFieldNames().forEach(fieldName -> {
-            Integer freq = wordFrequency.get(fieldName);
-            if (freq == null) {
-                wordFrequency.put(fieldName, (Integer) document.getFieldValue(fieldName));
-            } else {
-                wordFrequency.put(fieldName, freq + (Integer) document.getFieldValue(fieldName));
+        SolrQuery query = new SolrQuery("doc_s:" + fileName).setSort(SolrQuery.SortClause.asc("id"));
+        words.forEach(word -> query.addField(word + "Freq:termfreq(\"value_txt\",\"" + word + "\")"));
+        String cursorMark = CursorMarkParams.CURSOR_MARK_START;
+        boolean done = false;
+        while (! done) {
+            query.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
+            QueryRequest request = new QueryRequest(query);
+            QueryResponse response = request.process(solrTemplate.getSolrClient(), "message");
+            String nextCursorMark = response.getNextCursorMark();
+            response.getResults().forEach(document -> document.getFieldNames().forEach(fieldName -> {
+                Integer freq = wordFrequency.get(fieldName);
+                if (freq == null) {
+                    wordFrequency.put(fieldName, (Integer) document.getFieldValue(fieldName));
+                } else {
+                    wordFrequency.put(fieldName, freq + (Integer) document.getFieldValue(fieldName));
+                }
+            }));
+            if (cursorMark.equals(nextCursorMark)) {
+                done = true;
             }
-        }));
+            cursorMark = nextCursorMark;
+        }
+
         return wordFrequency;
     }
 }
